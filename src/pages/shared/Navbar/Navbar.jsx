@@ -87,13 +87,14 @@ const Navbar = () => {
         <ul className="menu menu-horizontal px-1">{links}</ul>
       </div>
       <div className="navbar-end">
+      <ThemeToggle />
         {user ? (
           <Link onClick={handleLogOut} className="btn btn-primary ml-4">
             Log Out
           </Link>
         ) : (
           <>
-            <ThemeToggle />
+            
             <Link to="/register">Register</Link>
             <Link to="/signIn" className="btn btn-primary ml-4">
               Sign In

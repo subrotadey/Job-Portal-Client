@@ -5,20 +5,21 @@ import toast from "react-hot-toast";
 import { Eye, EyeOff } from "lucide-react";
 import regLottieData from "../../assets/lottie/sign in.json";
 import SuccessToast from "../shared/Toast/SuccessToast";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import AuthContext from "../../context/AuthContext/AuthContext";
 import GoogleSignIn from "../shared/GoogleSignIn/GoogleSignIn";
+import FacebookSignIn from "../shared/FacebookSignIn/FacebookSignIn";
+import GitHubSIgnIn from "../shared/GitHubSIgnIn/GitHubSIgnIn";
 
 const SignIn = () => {
   const { signInUser } = useContext(AuthContext);
+  const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
-  const [showPassword, setShowPassword] = useState(false);
-
-
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -54,6 +55,7 @@ const SignIn = () => {
         console.log("User Signed In:", user);
         toast.success("Sign In successful!");
         console.log(userCredential.user);
+        navigate("/");
       })
       .catch((error) => {
         const errorCode = error.code;
@@ -85,12 +87,15 @@ const SignIn = () => {
         <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
           <div className="card-body">
             <div className="text-center space-y-2 mb-4">
-
               <p className="text-primary">Welcome back!</p>
               <h2 className="text-3xl font-bold">Member Login</h2>
-              <p className="text-sm ">Access to all features. No credit card required.</p>
+              <p className="text-sm ">
+                Access to all features. No credit card required.
+              </p>
             </div>
             <GoogleSignIn></GoogleSignIn>
+            <FacebookSignIn></FacebookSignIn>
+            <GitHubSIgnIn></GitHubSIgnIn>
             <form onSubmit={handleSignIn} className="space-y-4">
               <label className="label">Email</label>
               <input

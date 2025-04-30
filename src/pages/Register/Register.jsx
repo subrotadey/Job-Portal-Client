@@ -6,9 +6,14 @@ import { Eye, EyeOff } from "lucide-react";
 import SuccessToast from "../shared/Toast/SuccessToast";
 import AuthContext from "../../context/AuthContext/AuthContext";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import GoogleSignIn from "../shared/GoogleSignIn/GoogleSignIn";
+import FacebookSignIn from "../shared/FacebookSignIn/FacebookSignIn";
+import GitHubSIgnIn from "../shared/GitHubSIgnIn/GitHubSIgnIn";
 
 const Register = () => {
   const { registerUser } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -53,10 +58,11 @@ const Register = () => {
 
     registerUser(email, password)
       .then((userCredential) => {
-        // Signed in 
+        // Signed in
         const user = userCredential.user;
-        console.log("User registered:", user);  
+        console.log("User registered:", user);
         toast.success("Registration successful!");
+        navigate("/");
       })
       .catch((error) => {
         const errorCode = error.code;
@@ -84,6 +90,17 @@ const Register = () => {
         <SuccessToast></SuccessToast>
         <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
           <div className="card-body">
+            <div className="text-center space-y-2 mb-4">
+              <p className="text-primary">Welcome back!</p>
+              <h2 className="text-3xl font-bold">Member Login</h2>
+              <p className="text-sm ">
+                Access to all features. No credit card required.
+              </p>
+            </div>
+
+            <GoogleSignIn></GoogleSignIn>
+            <FacebookSignIn></FacebookSignIn>
+            <GitHubSIgnIn></GitHubSIgnIn>
             <form onSubmit={handleRegister} className="space-y-4">
               <label className="label">Name</label>
               <input
@@ -155,7 +172,10 @@ const Register = () => {
 
               <p className="mt-4 text-sm">
                 Already have an account?
-                <Link to="/signIn" className="link link-hover text-primary ml-1">
+                <Link
+                  to="/signIn"
+                  className="link link-hover text-primary ml-1"
+                >
                   Sign In Now
                 </Link>
               </p>

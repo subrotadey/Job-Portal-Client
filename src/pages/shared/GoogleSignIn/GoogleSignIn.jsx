@@ -2,11 +2,12 @@ import React, { useContext } from "react";
 import AuthContext from "../../../context/AuthContext/AuthContext";
 import { GoogleAuthProvider } from "firebase/auth";
 import toast from "react-hot-toast";
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 
 const GoogleSignIn = () => {
   const { signInWithGoogle } = useContext(AuthContext);
+  const navigate = useNavigate(); // ✅ Correct usage
 
   const handleGoogleSignIn = () => {
     signInWithGoogle()
@@ -18,7 +19,7 @@ const GoogleSignIn = () => {
         console.log("Google Sign In successful:", user);
         toast.success("Google Sign In successful!");
         // Optional: Navigate to dashboard or homepage
-        Navigate("/home");
+        navigate("/");
       })
       .catch((error) => {
         const errorCode = error.code;
@@ -41,7 +42,7 @@ const GoogleSignIn = () => {
         <FcGoogle className="w-5 h-5" />
         Sign in with Google
       </button>
-      <div className="divider">Or Continue with</div>
+      {/* <div className="divider">Or Continue with</div> */}
     </div>
   );
 };
