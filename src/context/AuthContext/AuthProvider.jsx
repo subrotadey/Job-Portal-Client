@@ -5,11 +5,12 @@ import {
   GoogleAuthProvider,
   onAuthStateChanged,
   signInWithEmailAndPassword,
-  // signInWithPopup,
+  signInWithPopup,
   signOut,
-  // signInWithPopup,
 } from "firebase/auth";
 import auth from "../../firebase/firebase.init";
+
+const provider = new GoogleAuthProvider();
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -29,7 +30,7 @@ const AuthProvider = ({ children }) => {
   const signOutUser = () => {
     setLoading(true);
     return signOut(auth);
-  }
+  };
 
   //Email Link Authentication
   // const SignInLinkToEmail = (email) => {
@@ -42,12 +43,11 @@ const AuthProvider = ({ children }) => {
   // }
 
   // for google authentication
-  // const provider = new GoogleAuthProvider();
 
-  // const handleGoogleSignIn = () => {
-  //   setLoading(true);
-  //   return signInWithPopup(auth, provider);
-  // };
+  const signInWithGoogle = () => {
+    setLoading(true);
+    return signInWithPopup(auth, provider);
+  };
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (CurrentUser) => {
@@ -71,7 +71,7 @@ const AuthProvider = ({ children }) => {
     registerUser,
     signInUser,
     signOutUser,
-    // handleGoogleSignIn
+    signInWithGoogle,
     // SignInLinkToEmail,
   };
   return (

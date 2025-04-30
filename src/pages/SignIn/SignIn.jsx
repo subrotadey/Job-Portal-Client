@@ -7,10 +7,7 @@ import regLottieData from "../../assets/lottie/sign in.json";
 import SuccessToast from "../shared/Toast/SuccessToast";
 import { Link } from "react-router-dom";
 import AuthContext from "../../context/AuthContext/AuthContext";
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-// import { auth, googleProvider } from "../../firebase/AuthProvider"; // path may vary
-import auth from "../../firebase/firebase.init";
-// import { sendSignInLinkToEmail } from "firebase/auth";
+import GoogleSignIn from "../shared/GoogleSignIn/GoogleSignIn";
 
 const SignIn = () => {
   const { signInUser } = useContext(AuthContext);
@@ -21,30 +18,7 @@ const SignIn = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
 
-  // Google Sign In
-   const provider = new GoogleAuthProvider();
 
-  const handleGoogleSignIn = () => {
-    signInWithPopup(auth, provider)
-      .then((result) => {
-        const credential = GoogleAuthProvider.credentialFromResult(result);
-        const token = credential.accessToken;
-        const user = result.user;
-        console.log("Token:", token);
-        console.log("Google Sign In successful:", user);
-        toast.success("Google Sign In successful!");
-        // Optional: Navigate to dashboard or homepage
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        const email = error.customData?.email;
-        const credential = GoogleAuthProvider.credentialFromError(error);
-        console.error(email, credential);
-        console.error("Google Sign In Error:", errorCode, errorMessage);
-        toast.error("Google Sign In failed. Please try again.");
-      });
-  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -93,20 +67,6 @@ const SignIn = () => {
         );
       });
 
-    
-
-      // sendSignInLinkToEmail(email)
-      // .then(() => {
-      //   // The link was successfully sent. Inform the user.
-      //   window.localStorage.setItem('emailForSignIn', email)
-      //   toast.success("Email link sent! Check your inbox.");
-      // })
-      // .catch((error) => {
-      //   const errorCode = error.code;
-      //   const errorMessage = error.message;
-      //   toast.error(`${errorMessage}, ${errorCode}`);
-      // });
-
     // Reset form after successful registration
     setFormData({
       email: "",
@@ -116,7 +76,6 @@ const SignIn = () => {
 
   return (
     <div className="hero bg-base-200 min-h-screen">
-      
       <div className="hero-content flex-col lg:flex-row">
         <div className="text-center lg:text-left w-1/3">
           <h1 className="text-5xl font-bold">Sign In now!</h1>
@@ -125,19 +84,13 @@ const SignIn = () => {
         <SuccessToast></SuccessToast>
         <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
           <div className="card-body">
+            <div className="text-center space-y-2 mb-4">
 
-
-          <button
-  type="button"
-  onClick={handleGoogleSignIn}
-  className="btn btn-outline btn-neutral w-full flex items-center justify-center gap-2"
->
-  <FcGoogle className="w-5 h-5" />
-  Sign in with Google
-</button>
-
-          <div className="divider">OR</div>
-
+              <p className="text-primary">Welcome back!</p>
+              <h2 className="text-3xl font-bold">Member Login</h2>
+              <p className="text-sm ">Access to all features. No credit card required.</p>
+            </div>
+            <GoogleSignIn></GoogleSignIn>
             <form onSubmit={handleSignIn} className="space-y-4">
               <label className="label">Email</label>
               <input
@@ -182,10 +135,6 @@ const SignIn = () => {
                 </Link>
               </p>
             </form>
-            <div className="divider">OR</div>
-
-
-
           </div>
         </div>
       </div>

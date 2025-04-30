@@ -1,11 +1,13 @@
 import React, { useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import AuthContext from "../../../context/AuthContext/AuthContext";
 import toast from "react-hot-toast";
+import logo from "../../../assets/job-logo.png";
+import ThemeToggle from "../ThemeToggle/ThemeToggle";
+import { motion } from "framer-motion";
 
 const Navbar = () => {
-  const {user, signOutUser} = useContext(AuthContext)
-
+  const { user, signOutUser } = useContext(AuthContext);
 
   const handleLogOut = () => {
     signOutUser()
@@ -19,15 +21,22 @@ const Navbar = () => {
       });
   };
 
-
   const links = (
     <>
       <li>
-        <a>Item 1</a>
+        <NavLink to="/">Home</NavLink>
       </li>
-
       <li>
-        <a>Item 3</a>
+        <NavLink to="/">Home</NavLink>
+      </li>
+      <li>
+        <NavLink to="/">Home</NavLink>
+      </li>
+      <li>
+        <NavLink to="/">Home</NavLink>
+      </li>
+      <li>
+        <NavLink to="/">Home</NavLink>
       </li>
     </>
   );
@@ -59,7 +68,20 @@ const Navbar = () => {
             {links}
           </ul>
         </div>
-        <Link to="/" className="btn btn-ghost text-xl">daisyUI</Link>
+        <a href="" className="btn btn-ghost text-xl">
+          <img src={logo} alt="" className="w-10" />
+          <motion.h3
+            className="text-3xl font-bold"
+            animate={{ color: ["#337aff", "#f84c4c", "#4400c4"] }}
+            transition={{
+              duration: 3,
+              repeat: Infinity,
+              repeatType: "reverse",
+            }}
+          >
+            JOBBOX
+          </motion.h3>
+        </a>
       </div>
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal px-1">{links}</ul>
@@ -71,14 +93,15 @@ const Navbar = () => {
           </Link>
         ) : (
           <>
-          <Link to="/register">Register</Link>
-          <Link to="/signIn" className="btn btn-primary ml-4">Sign In</Link>
+            <ThemeToggle />
+            <Link to="/register">Register</Link>
+            <Link to="/signIn" className="btn btn-primary ml-4">
+              Sign In
+            </Link>
           </>
         )}
-        
 
-
-{/*         
+        {/*         
         <Link to="/signIn" className="btn btn-primary ml-4">
         <button className="btn">Sign In</button>
         </Link> */}
