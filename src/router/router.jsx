@@ -3,6 +3,7 @@ import MainLayout from "../layout/MainLayout";
 import Home from "../pages/Home/Home";
 import Register from "../pages/Register/Register";
 import SignIn from "../pages/SignIn/SignIn";
+import ResetPassword from "../pages/shared/ResetPassword/ResetPassword";
 
 const router = createBrowserRouter([
   {
@@ -15,13 +16,17 @@ const router = createBrowserRouter([
         element: <Home> </Home>,
       },
       {
-        path: "register",
+        path: "/register",
         element: <Register> </Register>,
       },
       {
-        path: "signIn",
+        path: "/signIn",
         element: <SignIn> </SignIn>,
       },
+      {
+        path: "/reset-password",
+        element: <ResetPassword> </ResetPassword>,
+      }
     ],
   },
 ]);

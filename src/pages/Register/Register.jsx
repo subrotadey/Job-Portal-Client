@@ -12,7 +12,7 @@ import FacebookSignIn from "../shared/FacebookSignIn/FacebookSignIn";
 import GitHubSIgnIn from "../shared/GitHubSIgnIn/GitHubSIgnIn";
 
 const Register = () => {
-  const { registerUser } = useContext(AuthContext);
+  const { registerUser, verifyEmail } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -61,8 +61,16 @@ const Register = () => {
         // Signed in
         const user = userCredential.user;
         console.log("User registered:", user);
+        // 🔔 Send verification email
+        verifyEmail()
+          .then(() => {
+            toast.success("Verification email sent! Please check your inbox.");
+          })
+          .catch(() => {
+            toast.error("Failed to send verification email.");
+          });
         toast.success("Registration successful!");
-        navigate("/");
+        navigate("/signIn");
       })
       .catch((error) => {
         const errorCode = error.code;
@@ -81,14 +89,14 @@ const Register = () => {
   };
 
   return (
-    <div className="hero bg-base-200 min-h-screen">
+    <div className="hero min-h-screen">
       <div className="hero-content flex-col lg:flex-row">
         <div className="text-center lg:text-left w-1/3">
-          <h1 className="text-5xl font-bold">Register now!</h1>
+          {/* <h1 className="text-5xl font-bold">Register now!</h1> */}
           <Lottie animationData={regLottieData} />
         </div>
         <SuccessToast></SuccessToast>
-        <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
+        <div className="card w-full max-w-md bg-white bg-opacity-10 backdrop-blur-lg border border-gray-200 shadow-2xl">
           <div className="card-body">
             <div className="text-center space-y-2 mb-4">
               <p className="text-primary">Welcome back!</p>
@@ -101,7 +109,7 @@ const Register = () => {
             <GoogleSignIn></GoogleSignIn>
             <FacebookSignIn></FacebookSignIn>
             <GitHubSIgnIn></GitHubSIgnIn>
-            <form onSubmit={handleRegister} className="space-y-4">
+            <form onSubmit={handleRegister}>
               <label className="label">Name</label>
               <input
                 type="text"

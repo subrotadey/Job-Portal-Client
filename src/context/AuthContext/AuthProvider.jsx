@@ -6,6 +6,8 @@ import {
   GithubAuthProvider,
   GoogleAuthProvider,
   onAuthStateChanged,
+  sendEmailVerification,
+  sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
@@ -31,23 +33,29 @@ const AuthProvider = ({ children }) => {
     return signInWithEmailAndPassword(auth, email, password);
   };
 
+  //for email verification
+  const verifyEmail = () => {
+    setLoading(true);
+    return sendEmailVerification(auth.currentUser).finally(() => {
+      setLoading(false);
+    });
+  };
+
+  //for password reset
+  const resetPasswordEmail = (email) => {
+    setLoading(true);
+    return sendPasswordResetEmail(auth, email).finally(() => {
+      setLoading(false);
+    });
+  };
+
+  //for sign out user
   const signOutUser = () => {
     setLoading(true);
     return signOut(auth);
   };
 
-  //Email Link Authentication
-  // const SignInLinkToEmail = (email) => {
-  //   const actionCodeSettings = {
-  //     // URL you want to redirect back to after email link is finished
-  //     url: "http://localhost:5173/",
-  //     handleCodeInApp: true,
-  //   };
-  //   return SignInLinkToEmail(auth, email, actionCodeSettings);
-  // }
-
   // for google authentication
-
   const signInWithGoogle = () => {
     setLoading(true);
     return signInWithPopup(auth, googleAuth);
@@ -86,6 +94,8 @@ const AuthProvider = ({ children }) => {
     loading,
     registerUser,
     signInUser,
+    verifyEmail,
+    resetPasswordEmail,
     signOutUser,
     signInWithGoogle,
     signInWithFacebook,

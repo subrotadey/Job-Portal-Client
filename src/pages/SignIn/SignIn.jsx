@@ -77,14 +77,13 @@ const SignIn = () => {
   };
 
   return (
-    <div className="hero bg-base-200 min-h-screen">
+    <div className="hero min-h-screen bg-transparent">
       <div className="hero-content flex-col lg:flex-row">
         <div className="text-center lg:text-left w-1/3">
-          <h1 className="text-5xl font-bold">Sign In now!</h1>
           <Lottie animationData={regLottieData} />
         </div>
         <SuccessToast></SuccessToast>
-        <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
+        <div className="card w-full max-w-md bg-white bg-opacity-10 backdrop-blur-lg border border-gray-200 shadow-2xl">
           <div className="card-body">
             <div className="text-center space-y-2 mb-4">
               <p className="text-primary">Welcome back!</p>
@@ -96,12 +95,12 @@ const SignIn = () => {
             <GoogleSignIn></GoogleSignIn>
             <FacebookSignIn></FacebookSignIn>
             <GitHubSIgnIn></GitHubSIgnIn>
-            <form onSubmit={handleSignIn} className="space-y-4">
+            <form onSubmit={handleSignIn}>
               <label className="label">Email</label>
               <input
                 type="email"
                 className="input input-bordered w-full"
-                placeholder="Email"
+                placeholder="Enter your email"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
@@ -112,7 +111,7 @@ const SignIn = () => {
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
-                  className="input input-bordered w-full pr-12"
+                  className="input input-bordered w-full"
                   placeholder="Password"
                   name="password"
                   value={formData.password}
@@ -125,6 +124,12 @@ const SignIn = () => {
                 >
                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </span>
+                <p className="text-sm mt-2">
+                  Forgot password?
+                  <Link to="/reset-password" className="ml-1 link text-primary">
+                    Reset here
+                  </Link>
+                </p>
               </div>
               <button className="btn btn-primary mt-4 w-full" type="submit">
                 Sign In

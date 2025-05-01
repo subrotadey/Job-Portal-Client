@@ -8,3 +8,5 @@ A comprehensive job portal platform designed to enable seamless interaction betw
 The purpose of this project is to assess skills, creativity, and problem-solving abilities while providing an efficient recruitment and job application experience.
 
 ---
+
+## 🌟 **NPM Install**
