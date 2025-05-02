@@ -10,3 +10,6 @@ The purpose of this project is to assess skills, creativity, and problem-solving
 ---
 
 ## 🌟 **NPM Install**
+ <!-- bullet point add -->
+ npm install react-horizontal-scrolling-menu
+npm install tailwind-scrollbar-hide

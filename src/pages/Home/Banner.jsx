@@ -6,16 +6,6 @@ import { FaBriefcase, FaMapMarkerAlt, FaTh } from "react-icons/fa";
 import { IoIosArrowDown } from "react-icons/io";
 
 const Banner = () => {
-  // const [industry, setIndustry] = useState("Industry");
-  // const [location, setLocation] = useState("Location");
-  // const [keyword, setKeyword] = useState("");
-
-  // const handleSearch = () => {
-  //   console.log("Industry:", industry);
-  //   console.log("Location:", location);
-  //   console.log("Keyword:", keyword);
-  //   // You can perform the actual search here
-  // };
 
   const [keyword, setKeyword] = useState("");
   const [industryOpen, setIndustryOpen] = useState(false);
@@ -88,7 +78,7 @@ const Banner = () => {
   }, []);
 
   return (
-    <div className="hero bg-base-200 min-h-screen ">
+    <div className="hero min-h-screen ">
       <div className="hero-content flex-col lg:flex-row-reverse justify-between">
         <div className="flex-1">
           <motion.img
