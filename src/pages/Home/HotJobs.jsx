@@ -24,7 +24,7 @@ const HotJobs = () => {
     <div>
       {/* make card for job posting */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-4">
-        {hotJobs.map((hotJob) => (
+        {hotJobs.slice(0, 8).map((hotJob) => (
           <HotJobCard key={hotJob._id} hotJob={hotJob}></HotJobCard>
         ))}
       </div>
