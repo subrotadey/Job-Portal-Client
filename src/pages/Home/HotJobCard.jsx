@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 
 const HotJobCard = ({ hotJob }) => {
   const {
+    _id,
     title,
     location,
     applicationDeadline,
@@ -117,7 +118,7 @@ const HotJobCard = ({ hotJob }) => {
             <FaBangladeshiTakaSign />
             {min}-{max}
           </p>
-          <Link to="/job-details">
+          <Link to={`/jobs/${_id}`}>
           <button className="btn btn-sm btn-primary opacity-70">
             Apply Now
           </button>

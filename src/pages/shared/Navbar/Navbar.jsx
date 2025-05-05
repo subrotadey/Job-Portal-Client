@@ -68,7 +68,7 @@ const Navbar = () => {
             {links}
           </ul>
         </div>
-        <a href="" className="btn btn-ghost text-xl">
+        <Link to="/" className="btn btn-ghost text-xl">
           <img src={logo} alt="" className="w-10" />
           <motion.h3
             className="text-3xl font-bold"
@@ -81,7 +81,7 @@ const Navbar = () => {
           >
             JOBBOX
           </motion.h3>
-        </a>
+        </Link>
       </div>
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal px-1">{links}</ul>

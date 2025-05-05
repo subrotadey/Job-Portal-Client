@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 import { Eye, EyeOff } from "lucide-react";
 import regLottieData from "../../assets/lottie/sign in.json";
 import SuccessToast from "../shared/Toast/SuccessToast";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import AuthContext from "../../context/AuthContext/AuthContext";
 import GoogleSignIn from "../shared/GoogleSignIn/GoogleSignIn";
 import FacebookSignIn from "../shared/FacebookSignIn/FacebookSignIn";
@@ -15,6 +15,9 @@ const SignIn = () => {
   const { signInUser } = useContext(AuthContext);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  const from = location?.state || "/";
 
   const [formData, setFormData] = useState({
     email: "",
@@ -55,7 +58,7 @@ const SignIn = () => {
         console.log("User Signed In:", user);
         toast.success("Sign In successful!");
         console.log(userCredential.user);
-        navigate("/");
+        navigate(from, { replace: true });
       })
       .catch((error) => {
         const errorCode = error.code;
