@@ -1,5 +1,5 @@
 import React from "react";
-import { useLoaderData } from "react-router-dom";
+import { Link, useLoaderData } from "react-router-dom";
 import {
   MapPin,
   Briefcase,
@@ -11,6 +11,7 @@ import {
 
 const JobDetails = () => {
   const {
+    _id,
     title,
     location,
     jobType,
@@ -98,7 +99,14 @@ const JobDetails = () => {
             <p className="text-sm text-gray-500">{hr_email}</p>
           </div>
         </div>
-        <button className="btn btn-primary">Apply Now</button>
+        <div className="flex gap-4">
+          <Link to={`mailto:${hr_email}`}>
+            <button className="btn btn-primary">Apply by Mail</button>
+          </Link>
+          <Link to={`/jobApply/${_id}`}>
+            <button className="btn btn-primary">Apply Now</button>
+          </Link>
+        </div>
       </div>
     </div>
   );

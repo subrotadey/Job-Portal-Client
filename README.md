@@ -5,11 +5,17 @@ A comprehensive job portal platform designed to enable seamless interaction betw
 ---
 
 ## 🌟 **Project Purpose**
+
 The purpose of this project is to assess skills, creativity, and problem-solving abilities while providing an efficient recruitment and job application experience.
 
 ---
 
 ## 🌟 **NPM Install**
+
  <!-- bullet point add -->
- npm install react-horizontal-scrolling-menu
-npm install tailwind-scrollbar-hide
+
+* npm install react-hook-form
+* npm install react-horizontal-scrolling-menu
+* npm install tailwind-scrollbar-hide
+* npm install react-spinners --save
+* npm install sweetalert2
