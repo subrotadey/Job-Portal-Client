@@ -9,7 +9,7 @@ const JobApply = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, reset } = useForm();
 
   const onSubmit = (data) => {
     const jobData = {
@@ -34,11 +34,13 @@ const JobApply = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        if (data.success) {
+        if (data.result.acknowledged) {
           Swal.fire({
             title: "Job application submitted successfully!",
             icon: "success",
+            text: "Your application has been added"
           });
+          reset()
           navigate("/myApplications");
         } else {
           Swal.fire({

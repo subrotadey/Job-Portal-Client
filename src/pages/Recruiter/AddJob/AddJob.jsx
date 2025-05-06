@@ -1,58 +1,58 @@
-import React, { useState } from "react";
-import useAuth from "../../../hooks/useAuth";
-import { useParams } from "react-router-dom";
-import { useForm } from "react-hook-form";
-import Swal from "sweetalert2";
+import React from "react";
+import { useForm, Controller } from "react-hook-form";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-// import { useState } from "react";
+import useAuth from "../../../hooks/useAuth";
+import Swal from "sweetalert2";
 
 const AddJob = () => {
-  const { id } = useParams();
   const { user } = useAuth();
-  // const navigate = useNavigate();
-  const [startDate, setStartDate] = useState(new Date());
-
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, control, reset } = useForm();
+  // const location = useLocation();
 
   const onSubmit = (data) => {
-    const jobData = {
-      jobId: id,
-      firstName: data["First name"],
-      lastName: data["Last name"],
-      email: user?.email,
-      mobileNumber: data["Mobile number"],
-      title: data["Title"],
-      status: "applied",
-      linkedIn: data.linkedin,
-      github: data.github,
-      resumeLink: data.resumeLink,
+    const addJobData = {
+      ...data,
+      // if you want to convert it to "YYYY/MM/DD => 2024-12-31"
+      applicationDeadline: data.applicationDeadline.toISOString().split("T")[0],
+      salaryRange: {
+        min: data.salaryRange.min,
+        max: data.salaryRange.max,
+        currency: data.salaryRange.currency,
+      },
+      requirements: data.requirements.split("\n"),
+      responsibilities: data.responsibilities.split("\n"),
+      description: data.description.split("\n"),
+      hr_email: user?.email,
+      hr_name: user?.displayName,
     };
-    console.log(jobData);
+    console.log(addJobData);
 
-    //   fetch("http://localhost:5000/job-applications", {
-    //     method: "POST",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify(jobData),
-    //   })
-    //     .then((res) => res.json())
-    //     .then((data) => {
-    //       if (data.success) {
-    //         Swal.fire({
-    //           title: "Job application submitted successfully!",
-    //           icon: "success",
-    //         });
-    //         navigate("/myApplications");
-    //       } else {
-    //         Swal.fire({
-    //           icon: "error",
-    //           title: "Oops...",
-    //           text: "Something went wrong!",
-    //         });
-    //       }
-    //     });
+    fetch("http://localhost:5000/jobs", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(addJobData),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        if (data.result.acknowledged) {
+          Swal.fire({
+            title: "Job posted successfully!",
+            text: "Your job has been added.",
+            icon: "success",
+          });
+          reset();
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Something went wrong!",
+          });
+        }
+      });
   };
 
   return (
@@ -66,7 +66,7 @@ const AddJob = () => {
             <input
               type="text"
               placeholder="Name of the company"
-              {...register("companyName", { required: true, maxLength: 80 })}
+              {...register("company", { required: true, maxLength: 80 })}
               className="input input-bordered w-full"
             />
           </div>
@@ -77,7 +77,7 @@ const AddJob = () => {
             <input
               type="text"
               placeholder="Title of the job"
-              {...register("jobTitle", { required: true, maxLength: 80 })}
+              {...register("title", { required: true, maxLength: 80 })}
               className="input input-bordered w-full"
             />
           </div>
@@ -88,7 +88,7 @@ const AddJob = () => {
             <input
               type="text"
               placeholder="Location"
-              {...register("jobLocation", { required: true, maxLength: 100 })}
+              {...register("location", { required: true, maxLength: 100 })}
               className="input input-bordered w-full"
             />
           </div>
@@ -121,7 +121,7 @@ const AddJob = () => {
                 className="select select-bordered w-full"
               >
                 <option disabled={true}>Select Category</option>
-                <option value="Onsite">Intern</option>
+                <option value="Intern">Intern</option>
                 <option value="Onsite">Onsite</option>
                 <option value="Remote">Remote</option>
                 <option value="Hybrid">Hybrid</option>
@@ -130,7 +130,7 @@ const AddJob = () => {
             </fieldset>
           </div>
 
-          {/* Category  */}
+          {/* Job Field */}
           <div>
             <label className="label">Job Field</label>
             <input
@@ -143,48 +143,54 @@ const AddJob = () => {
 
           {/* Deadline Picker */}
           <div>
-            <label className="label">Select a for deadline</label>
-            <DatePicker
-              selected={startDate}
-              onChange={(date) => setStartDate(date)}
-              peekNextMonth
-              showMonthDropdown
-              showYearDropdown
-              placeholderText="Select a date"
-              dropdownMode="select"
-              dateFormat="MM/dd/yyyy"
-              {...register("jobDeadline", { required: true, maxLength: 100 })}
-              className="input input-bordered w-full max-w-xs"
+            <label className="label">Job Deadline</label>
+            <Controller
+              control={control}
+              name="applicationDeadline"
+              rules={{ required: true }}
+              render={({ field }) => (
+                <DatePicker
+                  className="input input-bordered w-full"
+                  placeholderText="Select a date"
+                  selected={field.value}
+                  onChange={(date) => field.onChange(date)}
+                  peekNextMonth
+                  showMonthDropdown
+                  showYearDropdown
+                  dropdownMode="select"
+                  dateFormat="MM/dd/yyyy"
+                />
+              )}
             />
           </div>
 
           {/* HR Email Link */}
-          <div>
+          {/* <div>
             <label className="label">HR Email</label>
             <input
               type="text"
               placeholder="HR Email"
-              {...register("Email", {
+              {...register("hr_email", {
                 required: true,
                 pattern: /^\S+@\S+$/i,
               })}
               className="input input-bordered w-full"
             />
-          </div>
+          </div> */}
 
           {/* HR Name */}
-          <div>
-            <label className="label">Name Of Company HR</label>
+          {/* <div>
+            <label className="label">HR Name of the Company</label>
             <input
               type="text"
-              placeholder="Name Of Company HR"
-              {...register("companyHR", { required: true, maxLength: 80 })}
+              placeholder="HR Name Of the Company"
+              {...register("hr_name", { required: true, maxLength: 80 })}
               className="input input-bordered w-full"
             />
-          </div>
+          </div> */}
 
           {/* Mobile Number */}
-          <div>
+          {/* <div>
             <label className="label">Mobile Number</label>
             <input
               type="tel"
@@ -193,6 +199,23 @@ const AddJob = () => {
                 required: true,
                 minLength: 6,
                 maxLength: 12,
+              })}
+              className="input input-bordered w-full"
+            />
+          </div> */}
+
+          {/* Company Logo Link */}
+          <div>
+            <label className="label">Company Logo link</label>
+            <input
+              type="url"
+              placeholder="https://www..."
+              {...register("company_logo", {
+                required: "Company Logo Link is required",
+                pattern: {
+                  value: /^(ftp|http|https):\/\/[^ "]+$/,
+                  message: "Enter a valid URL",
+                },
               })}
               className="input input-bordered w-full"
             />
@@ -205,41 +228,25 @@ const AddJob = () => {
               <label className="flex items-center gap-2">
                 <input
                   type="radio"
-                  value="Yes"
-                  {...register("Developer", { required: true })}
+                  value="active"
+                  {...register("status", { required: true })}
                   className="radio radio-primary"
                 />
-                Yes
+                active
               </label>
             </div>
-          </div>
-          {/* Company Logo Link */}
-          <div>
-            <label className="label">Company Logo link</label>
-            <input
-              type="url"
-              placeholder="https://......."
-              {...register("companyLogo", {
-                required: "Company Logo Link is required",
-                pattern: {
-                  message: "Enter a valid URL",
-                },
-              })}
-              className="input input-bordered w-full"
-            />
           </div>
         </div>
         {/* Salary Range */}
         <label className="label underline">Salary Range</label>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        
           {/* Minimum Salary */}
           <div>
             <label className="label">Min</label>
             <input
               type="number"
               placeholder="Min Salary"
-              {...register("min", {
+              {...register("salaryRange.min", {
                 required: true,
                 pattern: /^[0-9]+$/,
               })}
@@ -252,7 +259,7 @@ const AddJob = () => {
             <input
               type="number"
               placeholder="Max Salary"
-              {...register("max", {
+              {...register("salaryRange.max", {
                 required: true,
                 pattern: /^[0-9]+$/,
               })}
@@ -266,31 +273,18 @@ const AddJob = () => {
               <legend className="fieldset-legend label">Currency</legend>
               <select
                 defaultValue="Currency"
-                {...register("currency", { required: true })}
+                {...register("salaryRange.currency", { required: true })}
                 className="select select-bordered w-full"
               >
                 <option disabled={true}>Currency</option>
-                <option value="Onsite">BDT</option>
-                <option value="Onsite">USD</option>
-                <option value="Remote">INR</option>
+                <option value="bdt">BDT</option>
+                <option value="usd">USD</option>
+                <option value="inr">INR</option>
+                <option value="rs">Rs</option>
               </select>
               {/* <span className="label">Optional</span> */}
             </fieldset>
           </div>
-        </div>
-
-        {/* Responsibilities */}
-        <div>
-          <label className="label">Responsibilities</label>
-          <textarea
-            placeholder="Write each job Responsibilities in new line (max 300 characters)"
-            {...register("jobResponsibilities", {
-              required: true,
-              maxLength: 300,
-            })}
-            className="textarea textarea-bordered w-full"
-            rows={5} // You can adjust the height by changing this
-          />
         </div>
 
         {/* Requirements */}
@@ -298,9 +292,23 @@ const AddJob = () => {
           <label className="label">Requirements</label>
           <textarea
             placeholder="Write each job requirements new line (max 500 characters)"
-            {...register("jobRequirements", {
+            {...register("requirements", {
               required: true,
               maxLength: 500,
+            })}
+            className="textarea textarea-bordered w-full"
+            rows={5} // You can adjust the height by changing this
+          />
+        </div>
+
+        {/* Responsibilities */}
+        <div>
+          <label className="label">Responsibilities</label>
+          <textarea
+            placeholder="Write each job Responsibilities in new line (max 300 characters)"
+            {...register("responsibilities", {
+              required: true,
+              maxLength: 300,
             })}
             className="textarea textarea-bordered w-full"
             rows={5} // You can adjust the height by changing this
@@ -312,7 +320,7 @@ const AddJob = () => {
           <label className="label">Description</label>
           <textarea
             placeholder="Enter job description (max 300 characters)"
-            {...register("jobDescription", {
+            {...register("description", {
               required: true,
               maxLength: 300,
             })}
