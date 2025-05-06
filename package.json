@@ -18,6 +18,7 @@
     "match-sorter": "^8.0.0",
     "motion": "^12.9.2",
     "react": "^19.0.0",
+    "react-datepicker": "^8.3.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.56.2",
     "react-horizontal-scrolling-menu": "^8.2.0",

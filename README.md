@@ -19,3 +19,4 @@ The purpose of this project is to assess skills, creativity, and problem-solving
 * npm install tailwind-scrollbar-hide
 * npm install react-spinners --save
 * npm install sweetalert2
+* npm install react-datepicker --save
