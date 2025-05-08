@@ -30,10 +30,10 @@ const Navbar = () => {
         <NavLink to="/">Home</NavLink>
       </li>
       <li>
-        <NavLink to="/jobs">All Jobs</NavLink>
+        <NavLink to="/addJob">Post Job</NavLink>
       </li>
       <li>
-        <NavLink to="/addJob">Post Job</NavLink>
+        <NavLink to="/myPostedJobs">My Posted Job</NavLink>
       </li>
       <li>
         <NavLink to="/myApplications">My Applications</NavLink>

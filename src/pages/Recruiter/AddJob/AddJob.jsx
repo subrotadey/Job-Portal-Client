@@ -4,17 +4,19 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import useAuth from "../../../hooks/useAuth";
 import Swal from "sweetalert2";
+import { useLocation } from "react-router-dom";
 
 const AddJob = () => {
   const { user } = useAuth();
   const { register, handleSubmit, control, reset } = useForm();
-  // const location = useLocation();
+  const location = useLocation();
 
   const onSubmit = (data) => {
     const addJobData = {
       ...data,
       // if you want to convert it to "YYYY/MM/DD => 2024-12-31"
       applicationDeadline: data.applicationDeadline.toISOString().split("T")[0],
+      applicationDate: data.applicationDate.toISOString().split("T")[0],
       salaryRange: {
         min: data.salaryRange.min,
         max: data.salaryRange.max,
@@ -45,6 +47,7 @@ const AddJob = () => {
             icon: "success",
           });
           reset();
+          location("/myPostedJobs");
         } else {
           Swal.fire({
             icon: "error",
@@ -141,6 +144,24 @@ const AddJob = () => {
             />
           </div>
 
+          {/* Application Date */}
+          <div>
+            <label className="label">Application Post Date</label>
+            <Controller
+              control={control}
+              name="applicationDate"
+              rules={{ required: true }}
+              render={({ field }) => (
+                <DatePicker
+                  className="input input-bordered w-full"
+                  selected={field.value}
+                  onChange={(date) => field.onChange(date)}
+                   placeholderText="Select Today date"
+                />
+              )}
+            />
+          </div>
+
           {/* Deadline Picker */}
           <div>
             <label className="label">Job Deadline</label>
@@ -165,10 +186,11 @@ const AddJob = () => {
           </div>
 
           {/* HR Email Link */}
-          {/* <div>
+          <div>
             <label className="label">HR Email</label>
             <input
               type="text"
+              defaultValue={user?.email}
               placeholder="HR Email"
               {...register("hr_email", {
                 required: true,
@@ -176,18 +198,19 @@ const AddJob = () => {
               })}
               className="input input-bordered w-full"
             />
-          </div> */}
+          </div>
 
           {/* HR Name */}
-          {/* <div>
+          <div>
             <label className="label">HR Name of the Company</label>
             <input
               type="text"
+              defaultValue={user?.displayName}
               placeholder="HR Name Of the Company"
               {...register("hr_name", { required: true, maxLength: 80 })}
               className="input input-bordered w-full"
             />
-          </div> */}
+          </div>
 
           {/* Mobile Number */}
           {/* <div>
