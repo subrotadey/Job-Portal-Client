@@ -25,7 +25,7 @@ const MyPostedJobs = () => {
   }, [user?.email]);
 
   return (
-    <div className="">
+    <div className="overflow-x-auto w-full">
       {jobPostData._id}
       {jobPostData.length === 0 && (
         <div className="text-center text-gray-500 mt-4">
