@@ -1,19 +1,80 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import useAuth from "../../../hooks/useAuth";
 import Swal from "sweetalert2";
-import { useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import Select from "react-select";
 
 const AddJob = () => {
   const { user } = useAuth();
-  const { register, handleSubmit, control, reset } = useForm();
-  const location = useLocation();
+  const [selectedOption, setSelectedOption] = useState(null);
+
+  const {
+    register,
+    handleSubmit,
+    control,
+    reset,
+    getValues,
+    formState: { errors },
+  } = useForm();
+  const navigate = useNavigate();
+
+  // File upload state
+  const [imageUrl, setImageUrl] = useState(null);
+  const [uploading, setUploading] = useState(false);
+
+  // Handle file change for image upload
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    console.log(file);
+    if (file) {
+      setUploading(true);
+
+      // Create FormData to send file to ImgBB
+      const formData = new FormData();
+      formData.append("image", file);
+
+      // ImgBB API URL
+      // environment variables for API URL and key
+      // Make sure to set these in your .env file
+      const API_URL = import.meta.env.VITE_IMGBB_API_URL;
+      const API_KEY = import.meta.env.VITE_IMGBB_API_KEY;
+
+      try {
+        const response = await fetch(`${API_URL}?key=${API_KEY}`, {
+          method: "POST",
+          body: formData,
+        });
+        const result = await response.json();
+
+        if (result.success) {
+          setImageUrl(result.data.url);
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Image upload failed!",
+          });
+        }
+      } catch (error) {
+        console.error("Error uploading file:", error);
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Something went wrong!",
+        });
+      } finally {
+        setUploading(false);
+      }
+    }
+  };
 
   const onSubmit = (data) => {
     const addJobData = {
       ...data,
+      category: data.category?.value || "",
       // if you want to convert it to "YYYY/MM/DD => 2024-12-31"
       applicationDeadline: data.applicationDeadline.toISOString().split("T")[0],
       applicationDate: data.applicationDate.toISOString().split("T")[0],
@@ -27,6 +88,7 @@ const AddJob = () => {
       description: data.description.split("\n"),
       hr_email: user?.email,
       hr_name: user?.displayName,
+      company_logo: imageUrl,
     };
     console.log(addJobData);
 
@@ -47,7 +109,7 @@ const AddJob = () => {
             icon: "success",
           });
           reset();
-          location("/myPostedJobs");
+          navigate("/myPostedJobs");
         } else {
           Swal.fire({
             icon: "error",
@@ -57,6 +119,97 @@ const AddJob = () => {
         }
       });
   };
+
+  //
+  const jobCategories = [
+    {
+      label: "Design",
+      options: [
+        { value: "UI/UX Design", label: "UI/UX Design" },
+        { value: "Graphic Design", label: "Graphic Design" },
+        { value: "Product Design", label: "Product Design" },
+        { value: "Motion Design", label: "Motion Design" },
+        { value: "Visual Design", label: "Visual Design" },
+        { value: "Web Design", label: "Web Design" },
+        { value: "Game Design", label: "Game Design" },
+        { value: "Illustration", label: "Illustration" },
+      ],
+    },
+    {
+      label: "Development",
+      options: [
+        { value: "Frontend Development", label: "Frontend Development" },
+        { value: "Backend Development", label: "Backend Development" },
+        { value: "Full Stack Development", label: "Full Stack Development" },
+        { value: "Mobile App Development", label: "Mobile App Development" },
+        { value: "WordPress Development", label: "WordPress Development" },
+        { value: "Shopify Development", label: "Shopify Development" },
+        { value: "Game Development", label: "Game Development" },
+      ],
+    },
+    {
+      label: "Marketing",
+      options: [
+        { value: "Digital Marketing", label: "Digital Marketing" },
+        { value: "SEO", label: "SEO" },
+        { value: "Content Marketing", label: "Content Marketing" },
+        { value: "Email Marketing", label: "Email Marketing" },
+        { value: "Social Media Marketing", label: "Social Media Marketing" },
+        { value: "Affiliate Marketing", label: "Affiliate Marketing" },
+      ],
+    },
+    {
+      label: "Writing",
+      options: [
+        { value: "Content Writing", label: "Content Writing" },
+        { value: "Copywriting", label: "Copywriting" },
+        { value: "Technical Writing", label: "Technical Writing" },
+        { value: "Blog Writing", label: "Blog Writing" },
+        { value: "Script Writing", label: "Script Writing" },
+        { value: "Ghostwriting", label: "Ghostwriting" },
+      ],
+    },
+    {
+      label: "Data",
+      options: [
+        { value: "Data Entry", label: "Data Entry" },
+        { value: "Data Analysis", label: "Data Analysis" },
+        { value: "Data Visualization", label: "Data Visualization" },
+        { value: "Machine Learning", label: "Machine Learning" },
+        { value: "Data Engineering", label: "Data Engineering" },
+      ],
+    },
+    {
+      label: "Admin & Support",
+      options: [
+        { value: "Virtual Assistant", label: "Virtual Assistant" },
+        { value: "Customer Support", label: "Customer Support" },
+        { value: "Technical Support", label: "Technical Support" },
+        { value: "Project Management", label: "Project Management" },
+        { value: "Transcription", label: "Transcription" },
+      ],
+    },
+  ];
+
+  const jobTypeOptions = [
+    { value: "Remote", label: "Remote" },
+    { value: "On-site", label: "On-site" },
+    { value: "Hybrid", label: "Hybrid" },
+    { value: "Full Time", label: "Full Time" },
+    { value: "Part Time", label: "Part Time" },
+    { value: "Internship", label: "Internship" },
+    { value: "Contractual", label: "Contractual" },
+    { value: "Freelance", label: "Freelance" },
+    { value: "Temporary", label: "Temporary" },
+    { value: "Volunteer", label: "Volunteer" },
+  ];
+
+  const currencyOptions = [
+    { value: "BDT", label: "BDT" },
+    { value: "USD", label: "USD" },
+    { value: "INR", label: "INR" },
+    { value: "Rs", label: "Rs" },
+  ];
 
   return (
     <div className="mx-auto bg-white shadow-md rounded-lg p-8 mt-10">
@@ -72,6 +225,9 @@ const AddJob = () => {
               {...register("company", { required: true, maxLength: 80 })}
               className="input input-bordered w-full"
             />
+            {errors.company && (
+              <p className="text-red-500 text-sm">Company name is required.</p>
+            )}
           </div>
 
           {/* Title */}
@@ -83,6 +239,74 @@ const AddJob = () => {
               {...register("title", { required: true, maxLength: 80 })}
               className="input input-bordered w-full"
             />
+            {errors.title && (
+              <p className="text-red-500 text-sm">Job title is required.</p>
+            )}
+          </div>
+
+          {/* Job Subcategory */}
+          <div className="form-control w-full mx-auto">
+            <label className="label">
+              {/* <span className="label-text font-semibold text-gray-700"> */}
+              Job Category
+              {/* </span> */}
+            </label>
+            <Controller
+              name="category"
+              control={control}
+              rules={{ required: true }}
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  options={jobCategories}
+                  value={selectedOption}
+                  onChange={(option) => {
+                    field.onChange(option);
+                    setSelectedOption(option);
+                  }}
+                  placeholder="Select a job Category"
+                  isClearable
+                  isSearchable
+                  className="text-sm w-full "
+                  classNamePrefix="react-select"
+                />
+              )}
+            />
+            {errors.category && (
+              <p className="text-red-500 text-sm">Job category is required.</p>
+            )}
+          </div>
+
+          {/* Job Type */}
+          <div>
+            <fieldset className="fieldset">
+              <legend className="fieldset-legend label">Job Type</legend>
+              <Controller
+                name="jobTypeTime"
+                control={control}
+                rules={{ required: true }}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    isClearable
+                    isSearchable
+                    options={jobTypeOptions}
+                    placeholder="Pick a Job Type"
+                    className="react-select-container"
+                    classNamePrefix="react-select"
+                    onChange={(selectedOption) =>
+                      field.onChange(selectedOption?.value || "")
+                    } // ✅ only store value
+                    value={jobTypeOptions.find(
+                      (option) => option.value === field.value
+                    )} // ✅ convert value back to object
+                  />
+                )}
+              />
+            </fieldset>
+            {errors.jobTypeTime && (
+              <p className="text-red-500 text-sm">Job type is required.</p>
+            )}
           </div>
 
           {/* Location */}
@@ -94,95 +318,65 @@ const AddJob = () => {
               {...register("location", { required: true, maxLength: 100 })}
               className="input input-bordered w-full"
             />
+            {errors.location && (
+              <p className="text-red-500 text-sm">Location is required.</p>
+            )}
           </div>
 
-          {/* Job Type */}
-          <div>
-            <fieldset className=" fieldset">
-              <legend className="fieldset-legend label">Job Type Time</legend>
-              <select
-                defaultValue="Pick a Job Type"
-                {...register("jobTypeTime", { required: true })}
-                className="select select-bordered w-full"
-              >
-                <option disabled={true}>Pick a Job Type</option>
-                <option value="fullTime">Full Time</option>
-                <option value="partTime">Part Time</option>
-                <option value="Contractual">Contractual</option>
-              </select>
-              {/* <span className="label">Optional</span> */}
-            </fieldset>
-          </div>
-
-          {/* Job Type */}
-          <div>
-            <fieldset className=" fieldset">
-              <legend className="fieldset-legend label">Job Type Place</legend>
-              <select
-                defaultValue="Select Category"
-                {...register("jobTypePlace", { required: true })}
-                className="select select-bordered w-full"
-              >
-                <option disabled={true}>Select Category</option>
-                <option value="Intern">Intern</option>
-                <option value="Onsite">Onsite</option>
-                <option value="Remote">Remote</option>
-                <option value="Hybrid">Hybrid</option>
-              </select>
-              {/* <span className="label">Optional</span> */}
-            </fieldset>
-          </div>
-
-          {/* Job Field */}
-          <div>
-            <label className="label">Job Field</label>
-            <input
-              type="text"
-              placeholder="Job Field"
-              {...register("jobField", { required: true, maxLength: 100 })}
-              className="input input-bordered w-full"
-            />
-          </div>
-
-          {/* Application Date */}
-          <div>
-            <label className="label">Application Post Date</label>
-            <Controller
-              control={control}
-              name="applicationDate"
-              rules={{ required: true }}
-              render={({ field }) => (
-                <DatePicker
-                  className="input input-bordered w-full"
-                  selected={field.value}
-                  onChange={(date) => field.onChange(date)}
-                   placeholderText="Select Today date"
-                />
+          <div className="flex items-between gap-2">
+            {/* Application Date */}
+            <div>
+              <label className="label">Application Post Date</label>
+              <Controller
+                control={control}
+                name="applicationDate"
+                rules={{ required: true }}
+                render={({ field }) => (
+                  <DatePicker
+                    className="input input-bordered w-full"
+                    selected={field.value}
+                    onChange={(date) => field.onChange(date)}
+                    placeholderText="Select Today date"
+                  />
+                )}
+              />
+              {errors.applicationDate && (
+                <p className="text-red-500 text-sm">
+                  Application date is required.
+                </p>
               )}
-            />
-          </div>
+            </div>
 
-          {/* Deadline Picker */}
-          <div>
-            <label className="label">Job Deadline</label>
-            <Controller
-              control={control}
-              name="applicationDeadline"
-              rules={{ required: true }}
-              render={({ field }) => (
-                <DatePicker
-                  className="input input-bordered w-full"
-                  placeholderText="Select a date"
-                  selected={field.value}
-                  onChange={(date) => field.onChange(date)}
-                  peekNextMonth
-                  showMonthDropdown
-                  showYearDropdown
-                  dropdownMode="select"
-                  dateFormat="MM/dd/yyyy"
-                />
+            {/* Deadline Picker */}
+            <div>
+              <label className="label">Job Deadline</label>
+              <Controller
+                control={control}
+                name="applicationDeadline"
+                rules={{ 
+                  required: true,
+                  validate: value => value > getValues("applicationDate") || "Deadline must be after post date"
+                }}
+                render={({ field }) => (
+                  <DatePicker
+                    className="input input-bordered w-full"
+                    placeholderText="Select a date"
+                    selected={field.value}
+                    onChange={(date) => field.onChange(date)}
+                    peekNextMonth
+                    showMonthDropdown
+                    showYearDropdown
+                    dropdownMode="select"
+                    dateFormat="MM/dd/yyyy"
+                  />
+                )}
+              />
+              {errors.applicationDeadline && (
+                <p className="text-red-500 text-sm">
+                  Application deadline is required.
+                </p>
               )}
-            />
+            </div>
           </div>
 
           {/* HR Email Link */}
@@ -198,6 +392,13 @@ const AddJob = () => {
               })}
               className="input input-bordered w-full"
             />
+            {errors.hr_email && (
+              <p className="text-red-500 text-sm">
+                {errors.hr_email.type === "required"
+                  ? "HR email is required."
+                  : "Invalid email format."}
+              </p>
+            )}
           </div>
 
           {/* HR Name */}
@@ -210,148 +411,196 @@ const AddJob = () => {
               {...register("hr_name", { required: true, maxLength: 80 })}
               className="input input-bordered w-full"
             />
+            {errors.hr_name && (
+              <p className="text-red-500 text-sm">HR name is required.</p>
+            )}
           </div>
 
-          {/* Mobile Number */}
-          {/* <div>
-            <label className="label">Mobile Number</label>
-            <input
-              type="tel"
-              placeholder="Mobile number"
-              {...register("Mobile number", {
-                required: true,
-                minLength: 6,
-                maxLength: 12,
-              })}
-              className="input input-bordered w-full"
-            />
-          </div> */}
-
-          {/* Company Logo Link */}
+          {/* Logo Upload */}
           <div>
-            <label className="label">Company Logo link</label>
+            <label className="label">Company Logo</label>
             <input
-              type="url"
-              placeholder="https://www..."
-              {...register("company_logo", {
-                required: "Company Logo Link is required",
-                pattern: {
-                  value: /^(ftp|http|https):\/\/[^ "]+$/,
-                  message: "Enter a valid URL",
-                },
-              })}
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
               className="input input-bordered w-full"
             />
+            <button
+              type="button"
+              disabled={uploading}
+              className="btn btn-primary mt-2"
+            >
+              {uploading ? "Uploading..." : "Upload Logo"}
+            </button>
+            {imageUrl && (
+              <div className="mt-4">
+                <p>Uploaded Logo:</p>
+                <img src={imageUrl} alt="Uploaded" width="100" />
+              </div>
+            )}
+            {errors.company_logo && (
+              <p className="text-red-500 text-sm">Company logo is required.</p>
+            )}
           </div>
 
           {/* Developer Status */}
           <div>
-            <label className="label">Status</label>
+            <label className="label font-semibold">Job Status</label>
             <div className="flex gap-4">
               <label className="flex items-center gap-2">
                 <input
                   type="radio"
-                  value="active"
+                  value="Active"
                   {...register("status", { required: true })}
                   className="radio radio-primary"
+                  aria-label="Active status"
                 />
-                active
+                <span>Active</span>
+              </label>
+              <label className="flex items-center gap-2">
+                <input
+                  type="radio"
+                  value="Inactive"
+                  {...register("status", { required: true })}
+                  className="radio radio-primary"
+                  aria-label="Inactive status"
+                />
+                <span>Inactive</span>
               </label>
             </div>
+            {errors.status && (
+              <p className="text-red-500 text-sm">Job status is required.</p>
+            )}
           </div>
-        </div>
-        {/* Salary Range */}
-        <label className="label underline">Salary Range</label>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          {/* Minimum Salary */}
+
+          {/* Salary Range */}
+
           <div>
-            <label className="label">Min</label>
-            <input
-              type="number"
-              placeholder="Min Salary"
-              {...register("salaryRange.min", {
-                required: true,
-                pattern: /^[0-9]+$/,
-              })}
-              className="input input-bordered w-full"
+            <label className="label underline">Salary Range</label>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+              {/* Minimum Salary */}
+              <div>
+                <label className="label">Min</label>
+                <input
+                  type="number"
+                  placeholder="Min Salary"
+                  {...register("salaryRange.min", {
+                    required: true,
+                    pattern: /^[0-9]+$/,
+                  })}
+                  className="input input-bordered w-full"
+                />
+                {errors.salaryRange?.min && (
+                  <p className="text-red-500 text-sm">
+                    Minimum salary is required and must be a number.
+                  </p>
+                )}
+              </div>
+
+              {/* Maximum Salary */}
+              <div>
+                <label className="label">Max</label>
+                <input
+                  type="number"
+                  placeholder="Max Salary"
+                  {...register("salaryRange.max", {
+                    required: true,
+                    pattern: /^[0-9]+$/,
+                  })}
+                  className="input input-bordered w-full"
+                />
+                {errors.salaryRange?.max && (
+                  <p className="text-red-500 text-sm">
+                    Maximum salary is required and must be a number.
+                  </p>
+                )}
+              </div>
+
+              {/* Currency */}
+              <div>
+                <fieldset className="fieldset">
+                  <legend className="fieldset-legend label">Currency</legend>
+                  <Controller
+                    name="salaryRange.currency"
+                    control={control}
+                    rules={{ required: true }}
+                    render={({ field }) => (
+                      <Select
+                        options={currencyOptions}
+                        placeholder="Pick a Currency"
+                        className="react-select-container"
+                        classNamePrefix="react-select"
+                        isClearable
+                        isSearchable
+                        value={
+                          currencyOptions.find(
+                            (option) => option.value === field.value
+                          ) || null
+                        }
+                        onChange={(option) =>
+                          field.onChange(option ? option.value : null)
+                        }
+                      />
+                    )}
+                  />
+                </fieldset>
+                {errors.salaryRange?.currency && (
+                  <p className="text-red-500 text-sm">Currency is required.</p>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Requirements */}
+          <div>
+            <label className="label">Requirements</label>
+            <textarea
+              placeholder="Write each job requirement in a new line"
+              {...register("requirements", { required: true })}
+              className="textarea textarea-bordered w-full"
+              rows={5}
             />
+            {errors.requirements && (
+              <p className="text-red-500 text-sm">
+                Job requirements are required.
+              </p>
+            )}
           </div>
-          {/* Maximum Salary */}
+
+          {/* Responsibilities */}
           <div>
-            <label className="label">Max</label>
-            <input
-              type="number"
-              placeholder="Max Salary"
-              {...register("salaryRange.max", {
+            <label className="label">Responsibilities</label>
+            <textarea
+              placeholder="Write each job responsibility in a new line"
+              {...register("responsibilities", {
                 required: true,
-                pattern: /^[0-9]+$/,
               })}
-              className="input input-bordered w-full"
+              className="textarea textarea-bordered w-full"
+              rows={5}
             />
+            {errors.responsibilities && (
+              <p className="text-red-500 text-sm">
+                Job responsibilities are required.
+              </p>
+            )}
           </div>
 
-          {/* Currency */}
+          {/* Description */}
           <div>
-            <fieldset className=" fieldset">
-              <legend className="fieldset-legend label">Currency</legend>
-              <select
-                defaultValue="Currency"
-                {...register("salaryRange.currency", { required: true })}
-                className="select select-bordered w-full"
-              >
-                <option disabled={true}>Currency</option>
-                <option value="bdt">BDT</option>
-                <option value="usd">USD</option>
-                <option value="inr">INR</option>
-                <option value="rs">Rs</option>
-              </select>
-              {/* <span className="label">Optional</span> */}
-            </fieldset>
+            <label className="label">Description</label>
+            <textarea
+              placeholder="Enter job description"
+              {...register("description", { required: true })}
+              className="textarea textarea-bordered w-full"
+              rows={5}
+            />
+            {errors.description && (
+              <p className="text-red-500 text-sm">
+                Job description is required.
+              </p>
+            )}
           </div>
         </div>
-
-        {/* Requirements */}
-        <div>
-          <label className="label">Requirements</label>
-          <textarea
-            placeholder="Write each job requirements new line (max 500 characters)"
-            {...register("requirements", {
-              required: true,
-              maxLength: 500,
-            })}
-            className="textarea textarea-bordered w-full"
-            rows={5} // You can adjust the height by changing this
-          />
-        </div>
-
-        {/* Responsibilities */}
-        <div>
-          <label className="label">Responsibilities</label>
-          <textarea
-            placeholder="Write each job Responsibilities in new line (max 300 characters)"
-            {...register("responsibilities", {
-              required: true,
-              maxLength: 300,
-            })}
-            className="textarea textarea-bordered w-full"
-            rows={5} // You can adjust the height by changing this
-          />
-        </div>
-
-        {/* Description */}
-        <div>
-          <label className="label">Description</label>
-          <textarea
-            placeholder="Enter job description (max 300 characters)"
-            {...register("description", {
-              required: true,
-              maxLength: 300,
-            })}
-            className="textarea textarea-bordered w-full"
-            rows={5} // You can adjust the height by changing this
-          />
-        </div>
-
         {/* Submit Button */}
         <div>
           <button type="submit" className="btn btn-primary w-full">

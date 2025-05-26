@@ -14,7 +14,7 @@ const JobDetails = () => {
     _id,
     title,
     location,
-    jobType,
+    jobTypeTime,
     category,
     applicationDeadline,
     salaryRange: { min, max, currency },
@@ -48,7 +48,7 @@ const JobDetails = () => {
           <MapPin size={18} /> {location}
         </div>
         <div className="flex items-center gap-2 text-gray-700">
-          <Briefcase size={18} /> {jobType} - {category}
+          <Briefcase size={18} /> {jobTypeTime} - {category}
         </div>
         <div className="flex items-center gap-2 text-gray-700">
           <Calendar size={18} /> Deadline: {applicationDeadline}

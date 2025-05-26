@@ -2,7 +2,7 @@ import React from "react";
 import { FaBangladeshiTakaSign } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 
-const HotJobCard = ({ hotJob }) => {
+const JobCard = ({ job }) => {
   const {
     _id,
     title,
@@ -13,10 +13,9 @@ const HotJobCard = ({ hotJob }) => {
     company,
     requirements,
     company_logo,
-  } = hotJob; // Destructure hotJob object
+  } = job; // Destructure hotJob object
 
   const { min, max } = salaryRange; // Destructure salaryRange object
-
   return (
     <div className="card bg-[#f7f9fe] hover:bg-white transition-all duration-300 shadow-md border border-gray-200 hover:-translate-y-1">
       <div className="card-body">
@@ -102,7 +101,7 @@ const HotJobCard = ({ hotJob }) => {
             : description}
         </p>
 
-        {/* <div className="flex flex-wrap gap-2 mt-2">
+        <div className="flex flex-wrap gap-2 mt-2">
           {requirements.map((requirement, index) => (
             <small
               key={index}
@@ -111,17 +110,17 @@ const HotJobCard = ({ hotJob }) => {
               {requirement}
             </small>
           ))}
-        </div> */}
+        </div>
         <small className="text-red-600">Deadline:{applicationDeadline}</small>
-        <div className="flex items-center justify-end mt-2">
-          {/* <p className="text-base font-normal text-gray-500 flex items-center">
+        <div className="flex items-center justify-between mt-2">
+          <p className="text-base font-normal text-gray-500 flex items-center">
             <FaBangladeshiTakaSign />
             {min}-{max}
-          </p> */}
+          </p>
           <Link to={`/jobs/${_id}`}>
-          <button className="btn btn-sm btn-primary opacity-70">
-            Apply Now
-          </button>
+            <button className="btn btn-sm btn-primary opacity-70">
+              Apply Now
+            </button>
           </Link>
         </div>
       </div>
@@ -129,4 +128,4 @@ const HotJobCard = ({ hotJob }) => {
   );
 };
 
-export default HotJobCard;
+export default JobCard;

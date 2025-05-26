@@ -1,10 +1,60 @@
 import React, { useEffect, useState } from "react";
 import useAuth from "../../../hooks/useAuth";
 import { Link } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const MyPostedJobs = () => {
   const { user } = useAuth();
   const [jobPostData, setJobPostData] = useState([]);
+
+  // Function to handle job deletion
+  const handleDelete = async (_id) => {
+    console.log("Deleting job with ID:", _id);
+
+    Swal.fire({
+      title: "Are you sure you want to delete this job post?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Call the delete API
+        fetch(`http://localhost:5000/jobs/${_id}`, {
+          method: "DELETE",
+        })
+          .then((response) => {
+            if (response.ok) {
+              // Filter out the deleted job from the state
+              setJobPostData((prevJobs) =>
+                prevJobs.filter((job) => job._id !== _id)
+              );
+              Swal.fire({
+                title: "Deleted!",
+                text: "Your file has been deleted.",
+                icon: "success",
+              });
+            } else {
+              Swal.fire({
+                title: "Error!",
+                text: "Failed to delete the job post.",
+                icon: "error",
+              });
+            }
+          })
+          .catch((error) => {
+            console.error("Error deleting job:", error);
+            Swal.fire({
+              title: "Error!",
+              text: "Failed to delete the job post.",
+              icon: "error",
+            });
+          });
+      }
+    });
+  };
 
   useEffect(() => {
     const fetchJobs = async () => {
@@ -62,7 +112,12 @@ const MyPostedJobs = () => {
                 </td>
                 <td className="flex gap-2 justify-center">
                   <button className="btn btn-secondary btn-sm">Edit</button>
-                  <button className="btn btn-error btn-sm">Delete</button>
+                  <button
+                    onClick={() => handleDelete(job._id)}
+                    className="btn btn-error btn-sm"
+                  >
+                    Delete
+                  </button>
                 </td>
               </tr>
             ))}

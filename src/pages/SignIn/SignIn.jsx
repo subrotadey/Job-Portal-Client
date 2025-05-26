@@ -10,13 +10,14 @@ import AuthContext from "../../context/AuthContext/AuthContext";
 import GoogleSignIn from "../shared/GoogleSignIn/GoogleSignIn";
 import FacebookSignIn from "../shared/FacebookSignIn/FacebookSignIn";
 import GitHubSIgnIn from "../shared/GitHubSIgnIn/GitHubSIgnIn";
+import axios from "axios";
 
 const SignIn = () => {
   const { signInUser } = useContext(AuthContext);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   const from = location?.state || "/";
 
   const [formData, setFormData] = useState({
@@ -54,11 +55,18 @@ const SignIn = () => {
     signInUser(email, password)
       .then((userCredential) => {
         // Signed in
-        const user = userCredential.user;
-        console.log("User Signed In:", user);
+        console.log("User Signed In:", userCredential.user.email);
         toast.success("Sign In successful!");
         console.log(userCredential.user);
-        navigate(from, { replace: true });
+
+        const user = { email: email };
+
+        axios.post("http://localhost:5000/jwt-login", user).then((response) => {
+          console.log(response.data);
+        });
+
+
+        // navigate(from, { replace: true });
       })
       .catch((error) => {
         const errorCode = error.code;

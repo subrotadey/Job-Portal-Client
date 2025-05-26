@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import useAuth from "../../hooks/useAuth";
 import Spinner from "../shared/Spinner/Spinner";
+import { Link } from "react-router-dom";
+import Badge from "../shared/Badge/Badge";
 
 const MyApplications = () => {
   const { user } = useAuth();
   const [jobs, setJobs] = useState([]);
-  const [loading, setLoading] = useState(false); // loader state
+  const [loading, setLoading] = useState(true); // loader state
 
   const fetchJobs = () => {
     setLoading(true);
@@ -26,31 +28,6 @@ const MyApplications = () => {
       fetchJobs(); // initial fetch
     }
   }, [user?.email]);
-
-  const getStatusBadge = (status) => {
-    const statusText = status || "Under Review";
-    const statusLower = statusText.toLowerCase();
-
-    let badgeClass = "badge badge-outline";
-    if (statusLower === "under review") badgeClass = "badge badge-info";
-    else if (statusLower === "set interview") badgeClass = "badge badge-warning";
-    else if (statusLower === "hired") badgeClass = "badge badge-success";
-    else if (statusLower === "rejected") badgeClass = "badge badge-error";
-    else if (statusLower === "interview scheduled") badgeClass = "badge badge-primary";
-    else if (statusLower === "offer letter") badgeClass = "badge badge-primary";
-    else if (statusLower === "offer accepted") badgeClass = "badge badge-success";
-    else if (statusLower === "offer rejected") badgeClass = "badge badge-error";
-    else if (statusLower === "offer pending") badgeClass = "badge badge-warning";
-    else if (statusLower === "offer withdrawn") badgeClass = "badge badge-secondary";
-    else if (statusLower === "offer expired") badgeClass = "badge badge-secondary";
-
-    return (
-      <span className={`${badgeClass} flex items-center gap-2`}>
-        {statusText}
-        <span className="animate-pulse text-xs text-gray-400">⏺</span>
-      </span>
-    );
-  };
 
   return (
     <div>
@@ -79,20 +56,48 @@ const MyApplications = () => {
                   <td>
                     <div className="avatar">
                       <div className="mask mask-squircle h-12 w-12">
-                        <img src={job.company_logo} alt="Company Logo" />
+                        <img
+                          src={job.company_logo || "/placeholder.png"}
+                          // onError={(e) => (e.target.src = "/placeholder.png")}
+                          alt="logo"
+                        />
                       </div>
                     </div>
                   </td>
                   <td>
                     <div>
-                      <div className="font-bold">{job.company}</div>
-                      <div className="text-sm opacity-50">{job.jobLocation}</div>
+                      <div className="font-bold">
+                        {job.company || (
+                          <p className="text-red-500 text-lg">
+                            Circular deleted by Authority
+                          </p>
+                        )}
+                      </div>
+                      <div className="text-sm opacity-50">
+                        {job.jobLocation}
+                      </div>
                     </div>
                   </td>
-                  <td>{job.jobTitle || "N/A"}</td>
-                  <td>{getStatusBadge(job.status)}</td>
                   <td>
-                    <button className="btn btn-ghost btn-xs">Details</button>
+                    {job.jobTitle || (
+                      <p className="text-red-500 text-lg">
+                        {"Circular deleted"}
+                      </p>
+                    )}
+                  </td>
+                  <td>
+                    <Badge status={job.status} />
+                  </td>
+                  <td>
+                    <button className="btn btn-ghost btn-xs">
+                      {job.jobTitle ? (
+                        <Link to={`/job-details/${job.jobId}`}>
+                          View Details
+                        </Link>
+                      ) : (
+                        <p className="text-red-500">This Job is no more</p>
+                      )}
+                    </button>
                   </td>
                 </tr>
               ))}
