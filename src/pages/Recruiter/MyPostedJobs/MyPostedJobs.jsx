@@ -22,7 +22,7 @@ const MyPostedJobs = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         // Call the delete API
-        fetch(`http://localhost:5000/jobs/${_id}`, {
+        fetch(`https://job-portal-server-7m7w.onrender.com/jobs/${_id}`, {
           method: "DELETE",
         })
           .then((response) => {
@@ -60,7 +60,7 @@ const MyPostedJobs = () => {
     const fetchJobs = async () => {
       try {
         const response = await fetch(
-          `http://localhost:5000/jobs?email=${user?.email}`
+          `https://job-portal-server-7m7w.onrender.com/jobs?email=${user?.email}`
         );
         const data = await response.json();
         setJobPostData(data); // job data set করো state এ

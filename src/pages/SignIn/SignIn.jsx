@@ -61,7 +61,7 @@ const SignIn = () => {
 
         const user = { email: email };
 
-        axios.post("http://localhost:5000/jwt-login", user).then((response) => {
+        axios.post("https://job-portal-server-7m7w.onrender.com/jwt-login", user).then((response) => {
           console.log(response.data);
         });
 

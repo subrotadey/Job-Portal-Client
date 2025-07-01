@@ -11,7 +11,7 @@ const MyApplications = () => {
 
   const fetchJobs = () => {
     setLoading(true);
-    fetch(`http://localhost:5000/job-application?email=${user?.email}`)
+    fetch(`https://job-portal-server-7m7w.onrender.com/job-application?email=${user?.email}`)
       .then((res) => res.json())
       .then((data) => {
         setJobs(data);

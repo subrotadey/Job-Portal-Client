@@ -9,7 +9,7 @@ const HotJobs = () => {
   useEffect(() => {
     const fetchHotJobs = async () => {
       try {
-        const response = await fetch("http://localhost:5000/jobs"); // Replace with your API endpoint
+        const response = await fetch("https://job-portal-server-7m7w.onrender.com/jobs"); // Replace with your API endpoint
         const data = await response.json();
         setHotJobs(data);
       } catch (error) {

@@ -11,7 +11,7 @@ const ViewApplications = () => {
 
     const status = statusValue === "Change Status" ? "" : statusValue;
     const response = await fetch(
-      `http://localhost:5000/job-applications/${id}`,
+      `https://job-portal-server-7m7w.onrender.com/job-applications/${id}`,
 
       {
         method: "PATCH",

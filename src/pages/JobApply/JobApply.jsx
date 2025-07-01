@@ -25,7 +25,7 @@ const JobApply = () => {
       resumeLink: data.resumeLink,
     };
 
-    fetch("http://localhost:5000/job-applications", {
+    fetch("https://job-portal-server-7m7w.onrender.com/job-applications", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

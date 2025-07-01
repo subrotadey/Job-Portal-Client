@@ -43,12 +43,12 @@ const router = createBrowserRouter([
           </PrivateRoute>
         ),
         loader: ({ params }) =>
-          fetch(`http://localhost:5000/jobs/${params.id}`),
+          fetch(`https://job-portal-server-7m7w.onrender.com/jobs/${params.id}`),
       },
       {
         path: "/alljobs",
         element: <AllJobs> </AllJobs>,
-        loader: () => fetch("http://localhost:5000/jobs"),
+        loader: () => fetch("https://job-portal-server-7m7w.onrender.com/jobs"),
       },
       {
         path: "/jobApply/:id",
@@ -58,7 +58,7 @@ const router = createBrowserRouter([
           </PrivateRoute>
         ),
         loader: ({ params }) =>
-          fetch(`http://localhost:5000/jobs/${params.id}`),
+          fetch(`https://job-portal-server-7m7w.onrender.com/jobs/${params.id}`),
       },
       {
         path: "/myApplications",
@@ -67,7 +67,7 @@ const router = createBrowserRouter([
             <MyApplications> </MyApplications>
           </PrivateRoute>
         ),
-        loader: () => fetch("http://localhost:5000/job-applications"),
+        loader: () => fetch("https://job-portal-server-7m7w.onrender.com/job-applications"),
       },
       {
         path: "/addJob",
@@ -93,7 +93,7 @@ const router = createBrowserRouter([
           </PrivateRoute>
         ),
         loader: ({ params }) =>
-          fetch(`http://localhost:5000/job-applications/jobs/${params.job_id}`),
+          fetch(`https://job-portal-server-7m7w.onrender.com/job-applications/jobs/${params.job_id}`),
       },
     ],
   },

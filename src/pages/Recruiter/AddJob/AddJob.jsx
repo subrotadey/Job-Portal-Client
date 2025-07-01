@@ -92,7 +92,7 @@ const AddJob = () => {
     };
     console.log(addJobData);
 
-    fetch("http://localhost:5000/jobs", {
+    fetch("https://job-portal-server-7m7w.onrender.com/jobs", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
